@@ -15,7 +15,7 @@ import java.util.Set;
 @NoArgsConstructor
 @Setter
 @Getter
-public class LegalEntity implements WithId {
+public class LegalEntity {
     @Id
     @GeneratedValue
     Long id;

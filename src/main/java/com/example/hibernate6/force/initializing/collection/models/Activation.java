@@ -11,7 +11,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
-public class Activation implements WithId {
+public class Activation {
     @Id
     @GeneratedValue
     Long id;

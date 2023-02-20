@@ -8,7 +8,7 @@ import lombok.*;
 @NoArgsConstructor
 @Getter
 @Setter
-public class Ownership implements WithId {
+public class Ownership {
     @Id
     @GeneratedValue
     Long id;

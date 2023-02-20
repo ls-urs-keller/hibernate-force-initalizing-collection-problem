@@ -11,7 +11,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
-import java.util.function.Function;
+import java.util.function.Supplier;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -26,11 +26,7 @@ class ActivationRepositoryIntegrationTest {
 
     @Test
     void in_one_transaction() {
-        tx(() -> common(this::persist,
-                this::persist,
-                this::persist,
-                this::persist,
-                id -> Optional.ofNullable(em.find(Activation.class, id))));
+        inTransaction( this::createAndRetrieve );
     }
 
     @Test
@@ -38,51 +34,38 @@ class ActivationRepositoryIntegrationTest {
         // it is enough to set BankAccount#legalEntity to lazy and this will pass
         // but this seems to be regression in cycle detection
     void using_separate_transactions() {
-        common(tx(this::persist),
-                tx(this::persist),
-                tx(this::persist),
-                tx(this::persist),
-                tx(id -> Optional.ofNullable(em.find(Activation.class, id))));
+        createAndRetrieve();
     }
 
-    void common(Function<LegalEntity, LegalEntity> legalEntityRepo,
-                Function<BankAccount, BankAccount> bankAccountRepo,
-                Function<Ownership, Ownership> ownershipRepo,
-                Function<Activation, Activation> activationRepo,
-                Function<Long, Optional<Activation>> findActivation
-    ) {
-        var le = legalEntityRepo.apply(new LegalEntity());
-        var bankAccount = bankAccountRepo.apply(new BankAccount(null, le));
-        var ownerShip = ownershipRepo.apply(new Ownership(null, le));
+    void createAndRetrieve() {
+        var le = new LegalEntity();
+        inTransaction(() -> em.persist(le));
+        var bankAccount = new BankAccount(null, le);
+        inTransaction(() -> em.persist(bankAccount));
+        var ownership = new Ownership(null, le);
+        inTransaction(() -> em.persist(ownership));
         Set<BankAccount> bankAccounts = new HashSet<>();
         bankAccounts.add(bankAccount);
         le.setBankAccounts(bankAccounts);
-        le.setOwnership(ownerShip);
-        legalEntityRepo.apply(le);
-        var activation = activationRepo.apply(new Activation(null, le, bankAccount));
-        Optional<Activation> activation0 = findActivation.apply(activation.getId());
+        le.setOwnership(ownership);
+        inTransaction(() -> em.merge(le));
+        var activation = new Activation(null, le, bankAccount);
+        inTransaction(() -> em.persist(activation));
+        Optional<Activation> activation0 = Optional.ofNullable(inTransaction(() -> em.find(Activation.class, activation.getId())));
         assertTrue(activation0.isPresent());
     }
 
 
-    public <L, R> Function<L, R> tx(Function<L, R> function) {
-        return l -> transactionTemplate.execute(status -> function.apply(l));
+    public <T> T inTransaction(Supplier<T> function) {
+        transactionTemplate.setPropagationBehavior( TransactionTemplate.PROPAGATION_REQUIRED );
+        return  transactionTemplate.execute(status -> function.get());
     }
 
-    public <L, R> Function<L, R> tx(Runnable runnable) {
-        return tx(ignored -> {
+    public void inTransaction(Runnable runnable) {
+        inTransaction(() -> {
             runnable.run();
             return null;
         });
-    }
-
-    <T extends WithId> T persist(T e) {
-        if (e.getId() != null) {
-            em.merge(e);
-        } else {
-            em.persist(e);
-        }
-        return e;
     }
 
 }

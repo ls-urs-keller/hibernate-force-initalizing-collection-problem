@@ -12,7 +12,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
-public class BankAccount implements WithId {
+public class BankAccount {
     @Id
     @GeneratedValue
     Long id;
