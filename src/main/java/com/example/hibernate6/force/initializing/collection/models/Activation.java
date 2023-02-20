@@ -8,10 +8,10 @@ public class Activation {
     @GeneratedValue
     Long id;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne
     LegalEntity legalEntity;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne
     BankAccount bankAccount;
 
     public Activation() {

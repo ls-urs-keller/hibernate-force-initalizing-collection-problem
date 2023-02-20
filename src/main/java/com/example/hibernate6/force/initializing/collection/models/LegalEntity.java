@@ -17,7 +17,7 @@ public class LegalEntity {
     @GeneratedValue
     private Long id;
 
-    @OneToOne(mappedBy = "legalEntity", fetch = FetchType.EAGER)
+    @OneToOne(mappedBy = "legalEntity")
     private Ownership ownership;
 
     @OneToMany(mappedBy = "legalEntity", fetch = FetchType.EAGER)

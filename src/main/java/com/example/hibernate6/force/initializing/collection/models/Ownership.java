@@ -1,7 +1,6 @@
 package com.example.hibernate6.force.initializing.collection.models;
 
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToOne;
@@ -11,7 +10,7 @@ public class Ownership {
     @Id
     @GeneratedValue
     private Long id;
-    @OneToOne(fetch = FetchType.EAGER)
+    @OneToOne
     private LegalEntity legalEntity;
 
     public Ownership() {
