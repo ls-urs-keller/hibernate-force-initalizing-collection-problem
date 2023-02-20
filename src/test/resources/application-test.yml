@@ -1,7 +1,7 @@
 spring:
   datasource:
-    url: jdbc:mysql://hibernate_orm_test:hibernate_orm_test@localhost/hibernate_orm_test?allowPublicKeyRetrieval=true
-    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:h2:mem:default;CASE_INSENSITIVE_IDENTIFIERS=TRUE;MODE=MySQL
+    driver-class-name: org.h2.Driver
   jpa:
     hibernate:
       ddl-auto: create
