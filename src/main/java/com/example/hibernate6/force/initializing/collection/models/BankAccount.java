@@ -1,23 +1,42 @@
 package com.example.hibernate6.force.initializing.collection.models;
 
-import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
 
 
 @Entity
-@AllArgsConstructor
-@NoArgsConstructor
-@Getter
-@Setter
 public class BankAccount {
     @Id
     @GeneratedValue
-    Long id;
+    private Long id;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    LegalEntity legalEntity;
+    private LegalEntity legalEntity;
 
+    public BankAccount() {
+    }
+
+    public BankAccount(Long id, LegalEntity legalEntity) {
+        this.id = id;
+        this.legalEntity = legalEntity;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public LegalEntity getLegalEntity() {
+        return legalEntity;
+    }
+
+    public void setLegalEntity(LegalEntity legalEntity) {
+        this.legalEntity = legalEntity;
+    }
 }

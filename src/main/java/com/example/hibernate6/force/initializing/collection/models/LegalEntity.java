@@ -1,29 +1,59 @@
 package com.example.hibernate6.force.initializing.collection.models;
 
 
-import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-
 import java.util.HashSet;
 import java.util.Set;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
+
 @Entity
-@AllArgsConstructor
-@NoArgsConstructor
-@Setter
-@Getter
 public class LegalEntity {
     @Id
     @GeneratedValue
-    Long id;
+    private Long id;
 
     @OneToOne(mappedBy = "legalEntity", fetch = FetchType.EAGER)
-    Ownership ownership;
+    private Ownership ownership;
 
     @OneToMany(mappedBy = "legalEntity", fetch = FetchType.EAGER)
-    Set<BankAccount> bankAccounts = new HashSet<>();
+    private Set<BankAccount> bankAccounts = new HashSet<>();
 
+    public LegalEntity() {
+    }
+
+    public LegalEntity(Long id, Ownership ownership, Set<BankAccount> bankAccounts) {
+        this.id = id;
+        this.ownership = ownership;
+        this.bankAccounts = bankAccounts;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Ownership getOwnership() {
+        return ownership;
+    }
+
+    public void setOwnership(Ownership ownership) {
+        this.ownership = ownership;
+    }
+
+    public Set<BankAccount> getBankAccounts() {
+        return bankAccounts;
+    }
+
+    public void setBankAccounts(
+            Set<BankAccount> bankAccounts) {
+        this.bankAccounts = bankAccounts;
+    }
 }
